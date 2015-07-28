@@ -3,7 +3,7 @@
 mb_internal_encoding('UTF-8');
 
 $fb2_file = 'example.fb2';
-$fb2_file = 'book.fb2';
+//$fb2_file = 'book.fb2';
 
 $xml = new XMLReader();
 $xml->open($fb2_file);
@@ -73,7 +73,7 @@ function getBookGenresNames($description) {
     $genres = getBookGenres($description);
     $names = array();
     foreach ($genres as $genre) {
-        $names[] = str_replace('_', ' ', $genre);
+        $names[] = mb_convert_case(str_replace('_', ' ', $genre), MB_CASE_TITLE);
     }
     return $names; 
 }
