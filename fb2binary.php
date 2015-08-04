@@ -1,6 +1,6 @@
 <?php
 
-$fb2_file = 'book.fb2';
+$fb2_file = 'example.fb2';
 $id = $_GET['id'];
 if (empty($id)) {
     header("HTTP/1.0 404 Not Found");
@@ -38,7 +38,7 @@ if ($handle) {
             
             $base64 = $matches[2];
             $decoded = base64_decode($base64);
-            header('Content-Type: ');
+            header('Content-Type: ' . $content_type);
             header('Content-Length: ' . strlen($decoded));
             echo $decoded;
             die();    

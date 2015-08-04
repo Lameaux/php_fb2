@@ -1,10 +1,10 @@
 <?php
 
-$fb2_file = 'book.fb2';
+$fb2_file = 'example.fb2';
 
 $html = '';
 $skip = 0;
-$limit = 1000;
+$limit = 100000;
 
 $handle = fopen($fb2_file, "r");
 if ($handle) {
@@ -36,7 +36,7 @@ if ($handle) {
             }          
           
             
-            $html .= $transformer->transform($line) . "\r\n";
+            $html .= $transformer->transform($line);
 
         }
         
@@ -44,10 +44,9 @@ if ($handle) {
 
             // locate last </p>
 
-    $firstP = strpos($html, '<p');            
     $lastP = strrpos($html, '</p>');
-    if ($firstP !== FALSE && $lastP !== FALSE) {
-        $html = substr($html, $firstP, $lastP + strlen('</p>'));    
+    if ($lastP !== FALSE) {
+        $html = substr($html, 0, $lastP + strlen('</p>'));    
     }
 
     fclose($handle);
@@ -76,13 +75,13 @@ private function replace($matches) {
         }
 
         // skips
-        $skips = array('section', 'a');         
-        if (in_array($tag, $skips)) {
+        $skips = array('section', 'a', 'script');         
+        if (in_array($tag, $skips)) {  print_r($matches,1);
             return '';
         }
 
         // parts
-        $parts = array('epigraph', 'annotation', 'cite', 'poem', 'history', 'title', 'subtitle', 'stanza', 'poem');         
+        $parts = array('epigraph', 'annotation', 'cite', 'poem', 'history', 'title', 'subtitle', 'poem', 'stanza');         
         if (in_array($tag, $parts)) {
             if ($closing) {
                 $key = array_search($tag, $this->stack);
@@ -96,12 +95,12 @@ private function replace($matches) {
         }
 
         // paragraphs
-        $paragraphs = array('text-author', 'p');
+        $paragraphs = array('text-author', 'p', 'v');
         if (in_array($tag, $paragraphs)) {
             if ($closing) {
                 return '</p>';
             } else {
-                $class = trim(implode('-', $this->stack) . ($tag != 'p' ? ' ' . $tag : '')) ;
+                $class = trim(implode(' ', $this->stack) . ($tag != 'p' ? ' ' . $tag : '')) ;
                 if ($class) {
                     return '<p class="' . trim($class) .'">';
                 } else {
@@ -116,7 +115,7 @@ private function replace($matches) {
             if ($closing) {
                 return '</span>';
             } else {
-                $class = trim(implode('-', $this->stack) . ' ' . $tag);
+                $class = trim(implode(' ', $this->stack) . ' ' . $tag);
                 if ($class) {
                     return '<span class="' . trim($class) . '">';
                 } else {
@@ -131,7 +130,7 @@ private function replace($matches) {
 
 public function transform($line) {
 
-    $line = preg_replace_callback('@<(/)?([a-z\-]+)(\s+.*)?/?>@', array($this, 'replace') , $line);
+    $line = preg_replace_callback('@<(/)?([a-z\-]+)(\s+.*)?/?>@iU', array($this, 'replace') , $line);
 
     return $line;
 }
