@@ -2,6 +2,10 @@
 
 $fb2_file = 'book.fb2';
 $id = $_GET['id'];
+if (empty($id)) {
+    header("HTTP/1.0 404 Not Found");
+    die();
+}
 
 $handle = fopen($fb2_file, "r");
 if ($handle) {
@@ -22,6 +26,8 @@ if ($handle) {
         }
     }
 
+    fclose($handle);
+
     if ($binaryFound) { 
         if (preg_match('@<binary([^>]*)>([^<]*)</binary>@is', $binaryContent, $matches)) {
             
@@ -34,10 +40,12 @@ if ($handle) {
             $decoded = base64_decode($base64);
             header('Content-Type: ');
             header('Content-Length: ' . strlen($decoded));
-            echo $decoded;    
+            echo $decoded;
+            die();    
         }
     }
 
-    fclose($handle);
+    header("HTTP/1.0 404 Not Found");
+    die();
 } 
 
