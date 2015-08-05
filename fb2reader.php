@@ -110,7 +110,7 @@ private function replace($matches) {
         }
         
         // spans
-        $spans = array('emphasis', 'strikethrough' , 'sub', 'sup', 'code', 'v');
+        $spans = array('emphasis', 'strikethrough' , 'sub', 'sup', 'code');
         if (in_array($tag, $spans)) {
             if ($closing) {
                 return '</span>';
